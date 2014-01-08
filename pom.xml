@@ -21,6 +21,7 @@
 		</license>
 	</licenses>
 	<modules>
+		<module>antiquity</module>
 		<module>neo4j</module>
 	</modules>
 	<scm>

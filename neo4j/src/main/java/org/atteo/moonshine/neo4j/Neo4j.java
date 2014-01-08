@@ -22,6 +22,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.atteo.config.XmlDefaultValue;
 import org.atteo.moonshine.blueprints.BlueprintsService;
+import com.google.inject.TypeLiteral;
+import org.atteo.moonshine.antiquity.AntiquityService;
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.factory.GraphDatabaseBuilder;
 import org.neo4j.graphdb.factory.GraphDatabaseFactory;
@@ -36,12 +38,16 @@ import com.google.inject.Provider;
 import com.google.inject.Scopes;
 import com.tinkerpop.blueprints.Graph;
 import com.tinkerpop.blueprints.impls.neo4j.Neo4jGraph;
+import com.vertixtech.antiquity.graph.ActiveVersionedGraph;
+import com.vertixtech.antiquity.graph.Configuration;
+import com.vertixtech.antiquity.graph.TransactionalVersionedGraph;
+import com.vertixtech.antiquity.graph.identifierBehavior.LongGraphIdentifierBehavior;
 
 /**
  * Neo4j Graph DB Service.
  */
 @XmlRootElement(name = "neo4j")
-public class Neo4j extends BlueprintsService {
+public class Neo4j extends AntiquityService {
 	/***
 	 * The type of the database persistence
 	 *
@@ -78,7 +84,24 @@ public class Neo4j extends BlueprintsService {
 		}
 	}
 
-	@Override
+    private class VersionedGraphProvider implements Provider<TransactionalVersionedGraph<Neo4jGraph, Long>> {
+        @Inject
+        Graph graphDb;
+
+        @Override
+        public TransactionalVersionedGraph<Neo4jGraph, Long> get() {
+            Configuration conf =
+                    new Configuration.ConfBuilder().privateVertexHashEnabled(privateVertexHash)
+                            .useNaturalIds(naturalIds)
+                            .useNaturalIdsOnlyIfSuppliedIdsAreIgnored(naturalIdsOnlyIfSuppliedIdsAreIgnored)
+                            .doNotVersionEmptyTransactions(dontVersionEmptyTransactions).build();
+
+            return (TransactionalVersionedGraph) new ActiveVersionedGraph.ActiveVersionedTransactionalGraphBuilder<Neo4jGraph, Long>(
+                    (Neo4jGraph)graphDb, new LongGraphIdentifierBehavior()).init(init).conf(conf).build();
+        }
+    }
+
+    @Override
 	public Module configure() {
 		return new AbstractModule() {
 			@Override
@@ -97,6 +120,8 @@ public class Neo4j extends BlueprintsService {
 				checkNotNull(builder, "Could not create a builder for the specified type [%s]", type);
 				bind(GraphDatabaseService.class).toProvider(new GraphDatabaseServiceProvider()).in(Scopes.SINGLETON);
 				bind(Graph.class).toProvider(new BlueprintsGraphProvider()).in(Scopes.SINGLETON);
+                bind(new TypeLiteral<TransactionalVersionedGraph<Neo4jGraph, Long>>() {}).toProvider(
+                        new VersionedGraphProvider()).in(Scopes.SINGLETON);
 			}
 		};
 	}
