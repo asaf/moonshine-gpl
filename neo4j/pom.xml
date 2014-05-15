@@ -9,7 +9,8 @@
 	<artifactId>neo4j</artifactId>
 	<name>Neo4j Graph DB</name>
 	<properties>
-		<neo4j.version>1.9.2</neo4j.version>
+		<!--Must be compatible with the version of blueprints-neo4j-graph artifact-->
+		<neo4j.version>2.0.1</neo4j.version>
 	</properties>
 	<dependencies>
 		<dependency>
@@ -29,7 +30,7 @@
 		</dependency>
 		<dependency>
 			<groupId>com.tinkerpop.blueprints</groupId>
-			<artifactId>blueprints-neo4j-graph</artifactId>
+			<artifactId>blueprints-neo4j2-graph</artifactId>
 			<version>${blueprints.version}</version>
 		</dependency>
 		<dependency>

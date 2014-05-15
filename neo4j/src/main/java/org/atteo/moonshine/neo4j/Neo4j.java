@@ -15,19 +15,15 @@
  */
 package org.atteo.moonshine.neo4j;
 
-import java.util.Map;
-
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.atteo.config.XmlDefaultValue;
-import org.atteo.moonshine.blueprints.BlueprintsService;
 import com.google.inject.TypeLiteral;
+import org.atteo.config.XmlDefaultValue;
 import org.atteo.moonshine.antiquity.AntiquityService;
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.factory.GraphDatabaseBuilder;
 import org.neo4j.graphdb.factory.GraphDatabaseFactory;
-import org.neo4j.graphdb.factory.GraphDatabaseSetting;
 import org.neo4j.test.TestGraphDatabaseFactory;
 
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -37,7 +33,7 @@ import com.google.inject.Module;
 import com.google.inject.Provider;
 import com.google.inject.Scopes;
 import com.tinkerpop.blueprints.Graph;
-import com.tinkerpop.blueprints.impls.neo4j.Neo4jGraph;
+import com.tinkerpop.blueprints.impls.neo4j2.Neo4j2Graph;
 import com.vertixtech.antiquity.graph.ActiveVersionedGraph;
 import com.vertixtech.antiquity.graph.Configuration;
 import com.vertixtech.antiquity.graph.TransactionalVersionedGraph;
@@ -80,24 +76,24 @@ public class Neo4j extends AntiquityService {
 
 		@Override
 		public Graph get() {
-			return new Neo4jGraph(graphDb);
+			return new Neo4j2Graph(graphDb);
 		}
 	}
 
-    private class VersionedGraphProvider implements Provider<TransactionalVersionedGraph<Neo4jGraph, Long>> {
+    private class VersionedGraphProvider implements Provider<TransactionalVersionedGraph<Neo4j2Graph, Long>> {
         @Inject
         Graph graphDb;
 
         @Override
-        public TransactionalVersionedGraph<Neo4jGraph, Long> get() {
+        public TransactionalVersionedGraph<Neo4j2Graph, Long> get() {
             Configuration conf =
                     new Configuration.ConfBuilder().privateVertexHashEnabled(privateVertexHash)
                             .useNaturalIds(naturalIds)
                             .useNaturalIdsOnlyIfSuppliedIdsAreIgnored(naturalIdsOnlyIfSuppliedIdsAreIgnored)
                             .doNotVersionEmptyTransactions(dontVersionEmptyTransactions).build();
 
-            return (TransactionalVersionedGraph) new ActiveVersionedGraph.ActiveVersionedTransactionalGraphBuilder<Neo4jGraph, Long>(
-                    (Neo4jGraph)graphDb, new LongGraphIdentifierBehavior()).init(init).conf(conf).build();
+            return (TransactionalVersionedGraph) new ActiveVersionedGraph.ActiveVersionedTransactionalGraphBuilder<Neo4j2Graph, Long>(
+                    (Neo4j2Graph)graphDb, new LongGraphIdentifierBehavior()).init(init).conf(conf).build();
         }
     }
 
@@ -120,16 +116,9 @@ public class Neo4j extends AntiquityService {
 				checkNotNull(builder, "Could not create a builder for the specified type [%s]", type);
 				bind(GraphDatabaseService.class).toProvider(new GraphDatabaseServiceProvider()).in(Scopes.SINGLETON);
 				bind(Graph.class).toProvider(new BlueprintsGraphProvider()).in(Scopes.SINGLETON);
-                bind(new TypeLiteral<TransactionalVersionedGraph<Neo4jGraph, Long>>() {}).toProvider(
+                bind(new TypeLiteral<TransactionalVersionedGraph<Neo4j2Graph, Long>>() {}).toProvider(
                         new VersionedGraphProvider()).in(Scopes.SINGLETON);
 			}
 		};
-	}
-
-	// TODO: Support setting db settings in configuration
-	public void settings(GraphDatabaseBuilder builder, Map<GraphDatabaseSetting, String> settings) {
-		for (Map.Entry<GraphDatabaseSetting, String> entry : settings.entrySet()) {
-			builder.setConfig(entry.getKey(), entry.getValue());
-		}
 	}
 }
