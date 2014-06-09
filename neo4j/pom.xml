@@ -4,7 +4,7 @@
 	<parent>
 		<artifactId>parent</artifactId>
 		<groupId>org.atteo.moonshine.gpl</groupId>
-		<version>1.0-SNAPSHOT</version>
+		<version>1-SNAPSHOT</version>
 	</parent>
 	<artifactId>neo4j</artifactId>
 	<name>Neo4j Graph DB</name>

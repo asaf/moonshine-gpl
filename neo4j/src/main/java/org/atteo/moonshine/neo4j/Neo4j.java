@@ -76,7 +76,9 @@ public class Neo4j extends AntiquityService {
 
 		@Override
 		public Graph get() {
-			return new Neo4j2Graph(graphDb);
+            Neo4j2Graph neo4j2Graph = new Neo4j2Graph(graphDb);
+            neo4j2Graph.autoStartTransaction(true);
+			return neo4j2Graph;
 		}
 	}
 
