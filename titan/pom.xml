@@ -6,10 +6,10 @@
 		<groupId>org.atteo.moonshine.gpl</groupId>
 		<version>1-SNAPSHOT</version>
 	</parent>
-	<artifactId>antiquity</artifactId>
-	<name>Antiquity - Historical support for Blueprints API</name>
+	<artifactId>titan</artifactId>
+	<name>Titan Graph DB</name>
 	<properties>
-		<antiquity.version>0.4</antiquity.version>
+		<titan.version>0.5.0</titan.version>
 	</properties>
 	<dependencies>
 		<dependency>
@@ -23,21 +23,37 @@
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>
-			<groupId>co.indexia</groupId>
+			<groupId>${project.groupId}</groupId>
 			<artifactId>antiquity</artifactId>
-			<version>${antiquity.version}</version>
+			<version>${project.version}</version>
 		</dependency>
 		<dependency>
-			<groupId>org.atteo.moonshine</groupId>
-			<artifactId>container-test-utils</artifactId>
-			<version>${project.version}</version>
-			<scope>test</scope>
+			<groupId>com.thinkaurelius.titan</groupId>
+			<artifactId>titan-core</artifactId>
+			<version>${titan.version}</version>
+			<exclusions>
+				<exclusion>
+					<artifactId>frames</artifactId>
+					<groupId>com.tinkerpop</groupId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>com.thinkaurelius.titan</groupId>
+			<artifactId>titan-berkeleyje</artifactId>
+			<version>${titan.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.atteo.moonshine</groupId>
 			<artifactId>blueprints</artifactId>
 			<version>${project.version}</version>
 			<classifier>tests</classifier>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.atteo.moonshine</groupId>
+			<artifactId>container-test-utils</artifactId>
+			<version>${project.version}</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
@@ -51,19 +67,4 @@
 			<scope>test</scope>
 		</dependency>
 	</dependencies>
-	<build>
-		<plugins>
-			<plugin>
-				<artifactId>maven-jar-plugin</artifactId>
-				<executions>
-					<execution>
-						<id>test-jar</id>
-						<goals>
-							<goal>test-jar</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
-		</plugins>
-	</build>
 </project>

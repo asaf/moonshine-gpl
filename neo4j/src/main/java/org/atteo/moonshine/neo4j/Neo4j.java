@@ -34,10 +34,10 @@ import com.google.inject.Provider;
 import com.google.inject.Scopes;
 import com.tinkerpop.blueprints.Graph;
 import com.tinkerpop.blueprints.impls.neo4j2.Neo4j2Graph;
-import com.vertixtech.antiquity.graph.ActiveVersionedGraph;
-import com.vertixtech.antiquity.graph.Configuration;
-import com.vertixtech.antiquity.graph.TransactionalVersionedGraph;
-import com.vertixtech.antiquity.graph.identifierBehavior.LongGraphIdentifierBehavior;
+import co.indexia.antiquity.graph.ActiveVersionedGraph;
+import co.indexia.antiquity.graph.Configuration;
+import co.indexia.antiquity.graph.TransactionalVersionedGraph;
+import co.indexia.antiquity.graph.identifierBehavior.LongGraphIdentifierBehavior;
 
 /**
  * Neo4j Graph DB Service.

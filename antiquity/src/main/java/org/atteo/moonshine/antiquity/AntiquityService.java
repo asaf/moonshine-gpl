@@ -24,8 +24,8 @@ import javax.xml.bind.annotation.XmlElement;
  * <p/>
  * <p>
  * Graph DB services that supports Blueprints API and also requires Historical
- * support should inherit from this service and bind {@link com.vertixtech.antiquity.graph.HistoricVersionedGraph}
- * and {@link com.vertixtech.antiquity.graph.ActiveVersionedGraph}
+ * support should inherit from this service and bind {@link com.indexiatech.antiquity.graph.HistoricVersionedGraph}
+ * and {@link com.indexiatech.antiquity.graph.ActiveVersionedGraph}
  * </p>
  */
 public abstract class AntiquityService extends BlueprintsService {

@@ -21,7 +21,7 @@ import com.tinkerpop.blueprints.IndexableGraph;
 import com.tinkerpop.blueprints.KeyIndexableGraph;
 import com.tinkerpop.blueprints.TransactionalGraph;
 import com.tinkerpop.blueprints.Vertex;
-import com.vertixtech.antiquity.graph.TransactionalVersionedGraph;
+import co.indexia.antiquity.graph.TransactionalVersionedGraph;
 import org.atteo.moonshine.blueprints.BlueprintsTest;
 import org.atteo.moonshine.tests.MoonshineConfiguration;
 import org.junit.Before;
