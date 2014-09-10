@@ -32,7 +32,10 @@ import org.atteo.config.XmlDefaultValue;
 import org.atteo.moonshine.antiquity.AntiquityService;
 
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlRootElement;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * Titan Graph DB Service.
@@ -52,6 +55,9 @@ public class Titan extends AntiquityService {
     @XmlElement
     @XmlDefaultValue("BERKELEY")
     Backend backend;
+
+    @XmlElement
+    public SchemaConfig schema;
 
     private Configuration antiquityConfig;
 
@@ -90,6 +96,11 @@ public class Titan extends AntiquityService {
                         .doNotVersionEmptyTransactions(dontVersionEmptyTransactions).build();
 
                 titanBuilder = TitanFactory.build().set("storage.backend", backend.getBackendType()).set("storage.directory", path);
+
+                //configure schema
+                if (schema != null && schema.getSchemaDefault() != null) {
+                    titanBuilder.set("schema.default", schema.getSchemaDefault());
+                }
 
                 bind(Graph.class).toProvider(new BlueprintsGraphProvider()).in(Scopes.SINGLETON);
                 bind(new TypeLiteral<TransactionalVersionedGraph<TitanGraph, Long>>() {

@@ -35,7 +35,8 @@ import static org.junit.Assert.assertThat;
         + "     <titan>"
         + "         <path>${dataHome}/titan</path>"
         + "         <backend>memory</backend>     "
-        + "         <init>true</init>             "
+        + "         <init>false</init>             "
+        + "         <schema><default>none</default></schema>"
         + "     </titan>"
         + "</config>")
 public class TitanTest extends MoonshineTest {
