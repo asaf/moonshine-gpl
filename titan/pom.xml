@@ -44,6 +44,11 @@
 			<version>${titan.version}</version>
 		</dependency>
 		<dependency>
+			<groupId>com.thinkaurelius.titan</groupId>
+			<artifactId>titan-lucene</artifactId>
+			<version>${titan.version}</version>
+		</dependency>
+		<dependency>
 			<groupId>org.atteo.moonshine</groupId>
 			<artifactId>blueprints</artifactId>
 			<version>${project.version}</version>

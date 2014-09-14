@@ -15,6 +15,7 @@
  */
 package org.atteo.moonshine.titan;
 
+import com.google.common.base.Strings;
 import com.google.inject.AbstractModule;
 import com.google.inject.Inject;
 import com.google.inject.Module;
@@ -32,10 +33,9 @@ import org.atteo.config.XmlDefaultValue;
 import org.atteo.moonshine.antiquity.AntiquityService;
 
 import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlRootElement;
-import java.util.Map;
-import java.util.Set;
+import javax.xml.bind.annotation.XmlElementWrapper;
+import java.util.List;
 
 /**
  * Titan Graph DB Service.
@@ -58,6 +58,11 @@ public class Titan extends AntiquityService {
 
     @XmlElement
     public SchemaConfig schema;
+    // XmLElementWrapper generates a wrapper element around XML representation
+    @XmlElementWrapper(name = "indices")
+    // XmlElement sets the name of the entities
+    @XmlElement(name = "index")
+    List<IndexConfig> indices;
 
     private Configuration antiquityConfig;
 
@@ -102,6 +107,19 @@ public class Titan extends AntiquityService {
                     titanBuilder.set("schema.default", schema.getSchemaDefault());
                 }
 
+                if (indices != null){
+                    for (IndexConfig indexConfig : indices){
+                        if (indexConfig.backend == IndexBackend.lucene){
+                            //set index backend
+                            titanBuilder.set(String.format("index.%s.backend",indexConfig.name), IndexBackend.lucene.getBackendType());
+                            titanBuilder.set(String.format("index.%s.index-name",indexConfig.name), indexConfig.name);
+                        }
+                        if (!Strings.isNullOrEmpty(indexConfig.path)){
+                            titanBuilder.set(String.format("index.%s.directory", indexConfig.name), indexConfig.path);
+                        }
+                    }
+                }
+
                 bind(Graph.class).toProvider(new BlueprintsGraphProvider()).in(Scopes.SINGLETON);
                 bind(new TypeLiteral<TransactionalVersionedGraph<TitanGraph, Long>>() {
                 }).toProvider(
@@ -122,5 +140,32 @@ public class Titan extends AntiquityService {
         public String getBackendType() {
             return backendType;
         }
+    }
+
+    public enum IndexBackend{
+        lucene("lucene");
+
+        IndexBackend(String backendType) {
+            this.backendType = backendType;
+        }
+
+        private String backendType;
+
+        public String getBackendType() {
+            return backendType;
+        }
+    }
+
+
+    public static class IndexConfig{
+        @XmlElement
+        String name;
+
+        @XmlElement
+        IndexBackend backend;
+
+        @XmlElement
+        @XmlDefaultValue("${dataHome}/titan_search")
+        String path;
     }
 }
